@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.CommentMapper">
+    <select id="selectCommentsByEquipId" parameterType="Integer" resultType="Comment">
+        SELECT id,
+               equip_id AS equipId,
+               username,
+               content,
+               create_time AS createTime
+        FROM comments
+        WHERE equip_id = #{equipId}
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 新增：插入评论（id自增，create_time由数据库自动生成） -->
+    <insert id="insertComment" parameterType="Comment">
+        INSERT INTO comments (username, equip_id, content, create_time)
+        VALUES (#{username}, #{equipId}, #{content}, NOW())
+    </insert>
+</mapper>

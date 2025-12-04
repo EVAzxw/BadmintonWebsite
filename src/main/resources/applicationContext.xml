@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 1. 扫描Service和Mapper层包（让Spring识别@Service、@Repository注解） -->
+    <context:component-scan base-package="org.example.service, org.example.mapper"/>
+
+    <!-- 2. 配置MySQL数据源（连接你的MySQL数据库） -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/> <!-- MySQL 8.0+驱动类 -->
+        <!-- 数据库连接URL：badminton_db是后续要创建的数据库名，useSSL=false避免SSL警告，serverTimezone=UTC解决时区问题 -->
+        <property name="url" value="jdbc:mysql://localhost:3306/badminton_db?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>        <property name="username" value="root"/> <!-- 你的MySQL用户名（默认是root） -->
+        <property name="password" value="123456"/> <!-- 你的MySQL密码（安装MySQL时设置的密码） -->
+    </bean>
+
+    <!-- 3. 配置SqlSessionFactory（MyBatis核心，关联数据源和MyBatis配置） -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/> <!-- 关联数据源 -->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/> <!-- 关联MyBatis全局配置 -->
+        <property name="mapperLocations" value="classpath*:mapper/*.xml"/> <!-- 扫描MyBatis XML映射文件（src/main/resources/mapper/下的.xml） -->
+        <property name="typeAliasesPackage" value="org.example.model"/> <!-- 实体类别名（简化XML中的resultType，如用"User"代替"org.example.model.User"） -->
+    </bean>
+
+    <!-- 4. 配置Mapper接口扫描器（自动生成Mapper接口的实现类，无需手动写实现） -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.example.mapper"/> <!-- Mapper接口所在包 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/> <!-- 关联SqlSessionFactory -->
+    </bean>
+</beans>

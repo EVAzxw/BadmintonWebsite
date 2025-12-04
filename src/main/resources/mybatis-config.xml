@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 配置实体类别名（扫描org.example.model包下的所有实体类，别名就是类名首字母小写，如User→user，也可直接用类名） -->
+    <typeAliases>
+        <package name="org.example.model"/>
+    </typeAliases>
+
+    <!-- 注意：MyBatis的环境配置（数据源、事务）已在applicationContext.xml中配置，这里无需重复配置 -->
+</configuration>

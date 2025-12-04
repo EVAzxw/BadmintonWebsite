@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mapper.CollectMapper">
+    <!-- 新增收藏 -->
+    <insert id="insertCollect" parameterType="Collect">
+        INSERT INTO collections (username, type, target_id)
+        VALUES (#{username}, #{type}, #{targetId})
+    </insert>
+
+    <!-- 取消收藏 -->
+    <delete id="deleteCollect" parameterType="Collect">
+        DELETE FROM collections
+        WHERE username = #{username} AND type = #{type} AND target_id = #{targetId}
+    </delete>
+
+    <!-- 检查是否已收藏 -->
+    <select id="checkCollect" parameterType="Collect" resultType="Integer">
+        SELECT COUNT(*) FROM collections
+        WHERE username = #{username} AND type = #{type} AND target_id = #{targetId}
+    </select>
+
+    <!-- 查询用户收藏列表 -->
+    <select id="selectCollectsByUsername" parameterType="String" resultType="Collect">
+        SELECT id, username, type, target_id AS targetId
+        FROM collections
+        WHERE username = #{username}
+    </select>
+</mapper>
