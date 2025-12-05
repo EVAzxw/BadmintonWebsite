@@ -12,10 +12,11 @@
 
     <!-- 2. 配置MySQL数据源（连接你的MySQL数据库） -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/> <!-- MySQL 8.0+驱动类 -->
-        <!-- 数据库连接URL：badminton_db是后续要创建的数据库名，useSSL=false避免SSL警告，serverTimezone=UTC解决时区问题 -->
-        <property name="url" value="jdbc:mysql://localhost:3306/badminton_db?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>        <property name="username" value="root"/> <!-- 你的MySQL用户名（默认是root） -->
-        <property name="password" value="123456"/> <!-- 你的MySQL密码（安装MySQL时设置的密码） -->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/badminton_db?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true&amp;useUnicode=true&amp;characterEncoding=utf-8"/>
+
+        <property name="username" value="root"/>
+        <property name="password" value="123456"/>
     </bean>
 
     <!-- 3. 配置SqlSessionFactory（MyBatis核心，关联数据源和MyBatis配置） -->

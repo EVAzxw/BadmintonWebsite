@@ -1,4 +1,348 @@
+/* 全局重置与基础样式 */
+:root {
+    --primary-color: #ff6600;       /* 主题橙色 */
+    --primary-hover: #e55a00;       /* 按钮悬停深橙色 */
+    --text-dark: #333333;           /* 深色文字 */
+    --text-light: #666666;          /* 浅色文字 */
+    --bg-color: #f4f6f9;            /* 页面背景色（更柔和的灰） */
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* 基础阴影 */
+    --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1); /* 悬停阴影 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
 body {
-    background-color: #f8f8f8;
-    font-family: "微软雅黑", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s;
+}
+
+/* 导航栏 */
+.nav {
+    background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%); /* 渐变背景 */
+    padding: 0 20px;
+    height: 60px;
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(255, 102, 0, 0.2);
+    position: sticky; /* 顶部吸附 */
+    top: 0;
+    z-index: 1000;
+}
+
+.nav .logo {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.nav .user-info {
+    font-size: 14px;
+}
+
+.nav .user-info a {
+    color: var(--white);
+    margin-left: 15px;
+    opacity: 0.9;
+}
+
+.nav .user-info a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* 通用布局容器 */
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* 标题美化 */
+.section-title {
+    font-size: 24px;
+    color: var(--text-dark);
+    margin-bottom: 25px;
+    padding-left: 15px;
+    border-left: 5px solid var(--primary-color); /* 左侧橙色竖条 */
+    font-weight: 600;
+}
+
+/* 登录/注册盒子 */
+.auth-box {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px; /* 限制最大宽度 */
+    margin: 80px auto;
+    transition: transform 0.3s;
+}
+
+.auth-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.auth-box h2 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+}
+
+/* 表单控件 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+}
+
+/* 按钮样式升级 */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(255, 102, 0, 0.3);
+}
+
+/* 小按钮 */
+.btn-small {
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    color: var(--white);
+    font-size: 13px;
+    transition: background-color 0.3s;
+}
+
+.btn-collect { background-color: var(--primary-color); }
+.btn-collect:hover { background-color: var(--primary-hover); }
+
+.btn-collected { background-color: #ccc; cursor: default; } /* 已收藏变为灰色 */
+.btn-cancel { background-color: #ff4d4f; }
+.btn-cancel:hover { background-color: #d9363e; }
+
+/* 链接文字 */
+.link-text {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+.link-text a {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.error-msg {
+    color: #ff4d4f;
+    background: #fff1f0;
+    border: 1px solid #ffccc7;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 14px;
+}
+
+/* 网格列表 */
+.grid-list {
+    display: grid;
+    /* 核心响应式逻辑：最小宽度280px，自动填充，无需媒体查询也能适配部分场景 */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: var(--white);
+    border: none; /* 去掉边框，用阴影代替 */
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card:hover {
+    transform: translateY(-5px); /* 上浮效果 */
+    box-shadow: var(--shadow-hover);
+}
+
+.card img {
+    border-radius: 8px;
+    margin-bottom: 15px;
+    object-fit: cover;
+    width: 100%;
+    height: 200px; /* 固定高度，防止图片参差不齐 */
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.card h3 a:hover {
+    color: var(--primary-color);
+}
+
+.card p {
+    color: var(--text-light);
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+/* 详情页样式 */
+.detail-container {
+    display: flex;
+    gap: 40px;
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 40px;
+    align-items: flex-start;
+}
+
+.detail-images {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.detail-images img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.detail-info {
+    flex: 1;
+}
+
+.detail-info h2 {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.detail-info p {
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: var(--text-dark);
+}
+
+/* 评论区 */
+.comment-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid #eee; /* 左侧装饰线 */
+    transition: border-color 0.3s;
+}
+
+.comment-item:hover {
+    border-left-color: var(--primary-color);
+}
+
+.comment-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #999;
+}
+
+.comment-user {
+    color: var(--text-dark);
+    font-weight: bold;
+    font-size: 15px;
+}
+
+/* 媒体查询 */
+@media (max-width: 768px) {
+    /* 容器边距减小 */
+    .container {
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+
+    /* 详情页变为垂直排列 */
+    .detail-container {
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .detail-images, .detail-info {
+        width: 100%;
+    }
+
+    .detail-info h2 {
+        font-size: 24px;
+    }
+
+    /* 登录框在手机上全宽 */
+    .auth-box {
+        margin: 40px auto;
+        padding: 30px 20px;
+        box-shadow: none; /* 手机上去掉浮空阴影更自然 */
+        background: transparent;
+    }
 }

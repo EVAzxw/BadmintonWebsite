@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>装备详情</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+<div class="nav">
+    <div class="logo">羽毛球网站</div>
+    <div class="user-info">
+        <a href="index.html">返回首页</a>
+    </div>
+</div>
+
+<div class="container">
+    <div id="equip-detail-area">
+    </div>
+
+    <div class="section-title">用户评论</div>
+
+    <div class="form-group">
+        <textarea id="comment-content" rows="3" placeholder="写下你的评论..."></textarea>
+        <button class="btn-primary" style="width: auto; margin-top: 10px;" onclick="submitComment()">发表评论</button>
+    </div>
+
+    <div id="comment-list-area">
+    </div>
+</div>
+
+<script src="static/js/utils.js"></script>
+<script src="static/js/equipment.js"></script>
+</body>
+</html>

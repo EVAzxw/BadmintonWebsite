@@ -1,129 +1,96 @@
 package org.example.controller;
 
 import org.example.model.Collect;
-import org.example.model.Match;
 import org.example.model.User;
 import org.example.service.CollectService;
 import org.example.service.EquipmentService;
 import org.example.service.MatchService;
 import org.example.service.UserService;
+import org.example.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-// @Controller：标记为Spring MVC控制器，处理HTTP请求
 @Controller
 public class UserController {
 
-    // 自动注入UserService实例
     @Autowired
     private UserService userService;
     @Autowired
     private MatchService matchService;
     @Autowired
     private EquipmentService equipmentService;
-    @Autowired // 新增：CollectService注入
-    private CollectService collectService; // 新增这一行
+    @Autowired
+    private CollectService collectService;
 
-    /**
-     * 1. 跳转到登录页（GET请求：访问/login）
-     */
-    @GetMapping({"/", "/login"})
-    public String toLogin() {
-        return "login"; // 视图解析器拼接为/WEB-INF/views/login.jsp
+    // 获取当前登录用户（前端初始化时调用）
+    @GetMapping("/user/current")
+    @ResponseBody
+    public Result<User> getCurrentUser(HttpSession session) {
+        User user = (User) session.getAttribute("loginUser");
+        return Result.success(user); // 没登录就是null，前端自己判断
     }
 
-    /**
-     * 2. 跳转到注册页（GET请求：访问/register）
-     */
-    @GetMapping("/register")
-    public String toRegister() {
-        return "register"; // 跳转到注册页
-    }
+    // 首页数据接口：一次性返回赛事、装备、用户收藏信息
+    @GetMapping("/api/index-data")
+    @ResponseBody
+    public Result<Map<String, Object>> getIndexData(HttpSession session) {
+        Map<String, Object> data = new HashMap<>();
 
-    /**
-     * 跳转到首页（index.jsp）
-     */
-    @GetMapping("/index")
-    public String toIndex(HttpSession session, Model model) {
+        // 1. 所有赛事和装备
+        data.put("matchList", matchService.getAllMatches());
+        data.put("equipList", equipmentService.getAllEquipments());
+
+        // 2. 如果用户登录了，获取他的收藏列表（用于前端显示已收藏状态）
         User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser == null) {
-            return "redirect:/login";
+        if (loginUser != null) {
+            List<Collect> userCollects = collectService.getCollectsByUsername(loginUser.getUsername());
+            data.put("userCollects", userCollects);
+            data.put("loginUser", loginUser);
         }
-        // 1. 传递用户信息
-        model.addAttribute("loginUser", loginUser);
-        // 2. 传递赛事数据
-        model.addAttribute("matchList", matchService.getAllMatches());
-        // 3. 传递装备数据
-        model.addAttribute("equipList", equipmentService.getAllEquipments());
-        // 4. 传递用户收藏列表（用于判断收藏状态，改变按钮样式）
-        List<Collect> userCollects = collectService.getCollectsByUsername(loginUser.getUsername());
-        model.addAttribute("userCollects", userCollects);
-        return "index";
+
+        return Result.success(data);
     }
 
-    /**
-     * 3. 处理注册请求（POST请求：表单提交到/doRegister）
-     * @param user 接收前端表单参数（username、password、phone）
-     * @param model 传递数据到前端页面（显示注册结果提示）
-     */
+    // 注册接口
     @PostMapping("/doRegister")
-    public String doRegister(User user, Model model) {
+    @ResponseBody
+    public Result<String> doRegister(User user) {
         int result = userService.register(user);
         if (result == 1) {
-            // 注册成功：跳转到登录页，并提示"注册成功，请登录"
-            model.addAttribute("msg", "注册成功，请登录！");
-            return "login";
+            return Result.success("注册成功");
         } else if (result == 0) {
-            // 用户名已存在：返回注册页，提示"用户名已被占用"
-            model.addAttribute("errorMsg", "用户名已被占用！");
-            return "register";
+            return Result.error("用户名已被占用");
         } else {
-            // 注册失败：返回注册页，提示"注册失败，请重试"
-            model.addAttribute("errorMsg", "注册失败，请重试！");
-            return "register";
+            return Result.error("注册失败，请重试");
         }
     }
 
-    /**
-     * 4. 处理登录请求（POST请求：表单提交到/doLogin）
-     * @param username 前端输入的用户名
-     * @param password 前端输入的密码
-     * @param session 会话对象：登录成功后存储用户信息
-     * @param model 传递错误提示到前端
-     */
+    // 登录接口
     @PostMapping("/doLogin")
-    public String doLogin(@RequestParam String username,
-                          @RequestParam String password,
-                          HttpSession session,
-                          Model model) {
-        // 调用Service层登录逻辑
+    @ResponseBody
+    public Result<User> doLogin(String username, String password, HttpSession session) {
         User loginUser = userService.login(username, password);
         if (loginUser != null) {
-            // 登录成功：将用户信息存入Session（后续验证登录状态用）
             session.setAttribute("loginUser", loginUser);
-            // 跳转到首页（index.jsp）
-            return "redirect:/index";
+            return Result.success(loginUser);
         } else {
-            // 登录失败：返回登录页，提示"用户名或密码错误"
-            model.addAttribute("errorMsg", "用户名或密码错误！");
-            return "login";
+            return Result.error("用户名或密码错误");
         }
     }
 
-    /**
-     * 5. 处理注销请求（GET请求：访问/logout）
-     * @param session 销毁会话中的用户信息
-     */
+    // 注销接口
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // 销毁Session，清除登录状态
-        return "redirect:/login"; // 跳转到登录页
+    @ResponseBody
+    public Result<String> logout(HttpSession session) {
+        session.invalidate();
+        return Result.success("已退出登录");
     }
 }
